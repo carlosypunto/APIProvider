@@ -51,6 +51,7 @@ public extension Autobahn {
                     throw AutobahnError.canNotDecode(data, request.urlRequest)
                 }
             }
+            .receive(on: RunLoop.main)
             .eraseToAnyPublisher()
     }
     
