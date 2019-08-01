@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "Autobahn",
+        "repositoryURL": "https://github.com/carlosypunto/Autobahn",
+        "state": {
+          "branch": null,
+          "revision": "96da8b75b2984874dc242660658516b82170ce9d",
+          "version": "0.0.1"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
