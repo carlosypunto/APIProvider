@@ -4,59 +4,21 @@
 
 Protocols and models for a simple creation Swift Combine AnyPublisher for call to JSON http APIs
 
-Pull requests are welcome!
 
 ## Description
 
-The AnyPublisher created will be received in main thread
-
-
-## Use case
-
-Given this service https://developers.themoviedb.org/3/discover/movie-discover we wait for the next model:
+Given this service https://developers.themoviedb.org/3/discover/movie-discover, with _Autobahn_, we only need this to define the  `AnyPublisher<DiscoverResponse, Error>`.
 
 ```swift
+import Foundation
+import Combine
+import Autobahn
 import SwiftUI
 
 struct DiscoverResponseMovie: Codable, Identifiable {
-    
-    let voteCount: Int
-    let id: Int
-    let video: Bool
-    let voteAverage: Double
-    let title: String
-    let popularity: Double
-    let posterPath: String
-    let originalLanguage: String
-    let originalTitle: String
-    let genreIDS: [Int]
-    let backdropPath: String?
-    let adult: Bool
-    let overview: String
-    let releaseDate: String
-
-    enum CodingKeys: String, CodingKey {
-        case voteCount = "vote_count"
-        case id
-        case video
-        case voteAverage = "vote_average"
-        case title
-        case popularity
-        case posterPath = "poster_path"
-        case originalLanguage = "original_language"
-        case originalTitle = "original_title"
-        case genreIDS = "genre_ids"
-        case backdropPath = "backdrop_path"
-        case adult, overview
-        case releaseDate = "release_date"
-    }
-    
+    ...
 }
-```
 
-and.
-
-```swift
 struct DiscoverResponse: Codable {
     let page: Int
     let totalResults: Int
@@ -70,14 +32,6 @@ struct DiscoverResponse: Codable {
         case movies = "results"
     }
 }
-```
-
-With _Autobahn_, we only need this to define the  `AnyPublisher<DiscoverResponse, Error>`.
-
-```swift
-import Foundation
-import Combine
-import Autobahn
 
 struct APIRequest: Autobahn {
     
@@ -115,6 +69,7 @@ var cancellable: Cancellable = APIRequest().discoverMovie(page: self.currentPage
         self.movies.append(contentsOf: $0.movies)
     })
 ```
+
 
 ### Error handling
 
@@ -157,6 +112,9 @@ var cancellable: Cancellable = APIRequest().discoverMovie(page: self.currentPage
     }
 ```
 
+---
+
+Pull requests are welcome!
 
 ## Licence
 
