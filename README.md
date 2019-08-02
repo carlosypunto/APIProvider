@@ -8,6 +8,11 @@ Pull requests are welcome!
 
 ## Description
 
+The AnyPublisher created will be received in main thread
+
+
+## Use case
+
 Given this service https://developers.themoviedb.org/3/discover/movie-discover we wait for the next model:
 
 ```swift
@@ -79,15 +84,19 @@ struct APIRequest: Autobahn {
     let baseURL: URL = URL(string: "https://api.themoviedb.org")!
     let decoder: JSONDecoder = JSONDecoder()
     let urlSession: URLSession = URLSession.shared
-    let commonHeaders: [String: String] = [:]
+    let commonHeaders: [String: String] = [:] // for all calls of APIRequest, not apply if redefined after
     let commonParameters: [String: String] = [
-    "api_key": "{{TMDB_API_KEY}}",
+        "api_key": "{{TMDB_API_KEY}}",
         "language": "es-ES",
         "include_image_language": "es",
     ]
 
     func discoverMovie(page: Int) -> AnyPublisher<DiscoverResponse, Error> {
         return get(path: "/3/discover/movie", parameters: ["page": "\(page)"])
+    }
+
+    func discoverMovie(page: Int) -> AnyPublisher<DiscoverResponse, Error> {
+        return get(path: "/3/discover/movie", parameters: ["page": "\(page)", "language": "en-GB"]) // prevails "en-GB"
     }
     
 }
@@ -98,9 +107,9 @@ And Voila!
 ```swift
 let emptyResponse = DiscoverResponse(page: 1, totalResults: 0, totalPages: 0, movies: [])
 var cancellable: Cancellable = APIRequest().discoverMovie(page: self.currentPage)
-    .replaceError(with: emptyResponse)
+    .replaceError(with: emptyResponse) // or 
     .eraseToAnyPublisher()
-    .sink(receiveValue: {
+    .sink(receiveValue: { // received in main thread
         self.totalPages = $0.totalPages
         self.currentPage = $0.page
         self.movies.append(contentsOf: $0.movies)
